@@ -1,0 +1,139 @@
+# depslib dependency file v1.0
+1415736832 source:/home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client/client.c
+	<stdio.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	"Utils.h"
+	"HandleTCPServer.h"
+
+1415531620 /home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client/ClientUtils.h
+	<stdio.h>
+	<stdlib.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+
+1415737012 source:/home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client/HandleTCPServer.c
+	<stdio.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	"Utils.h"
+	"HandleTCPServer.h"
+
+1415737031 /home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client/Utils.h
+	<stdio.h>
+	<stdlib.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+
+1415736681 source:/home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client/Utils.c
+	<stdio.h>
+	<stdlib.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	"Utils.h"
+
+1415737169 /home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client/HandleTCPServer.h
+
+1415737909 source:/home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client Student Copy/client.c
+	<stdio.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<unistd.h>
+	"Utils.h"
+	"HandleTCPServer.h"
+
+1415784279 /home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client Student Copy/Utils.h
+	<stdio.h>
+	<stdlib.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+
+1415737169 /home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client Student Copy/HandleTCPServer.h
+
+1415784765 source:/home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client Student Copy/HandleTCPServer.c
+	<stdio.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	"Utils.h"
+	"HandleTCPServer.h"
+
+1441651905 source:/home/neil/neil@eliot.org.uk/Work/EN0365-EthicalHackingForNetworkSecurity/Assignment/FTP Client Student Copy/Utils.c
+	<stdio.h>
+	<stdlib.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	"Utils.h"
+
+1441706837 source:c:\users\neil\google drive\work\en0365-ethicalhackingfornetworksecurity\assignment\ftp client student copy\handletcpserver.c
+	<stdio.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	"Utils.h"
+	"HandleTCPServer.h"
+
+1441703215 c:\users\neil\google drive\work\en0365-ethicalhackingfornetworksecurity\assignment\ftp client student copy\utils.h
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+
+1415740769 c:\users\neil\google drive\work\en0365-ethicalhackingfornetworksecurity\assignment\ftp client student copy\handletcpserver.h
+
+1446653507 source:c:\users\neil\google drive\work\en0365-ethicalhackingfornetworksecurity\assignment\ftp client student copy\utils.c
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	"Utils.h"
+
+1441706727 source:c:\users\neil\google drive\work\en0365-ethicalhackingfornetworksecurity\assignment\ftp client student copy\client.c
+	<stdio.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<stdlib.h>
+	<unistd.h>
+	"Utils.h"
+	"HandleTCPServer.h"
+

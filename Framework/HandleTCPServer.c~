@@ -1,0 +1,158 @@
+#include <stdio.h>      											/* for printf() and fprintf() */
+#ifdef _WIN32
+#include <winsock2.h>                                               /* for winsock 2 library which replace socket.h and inet.h */
+#include <ws2tcpip.h>                                               /* for defined constants */
+                                                                    /* ADD ws2_32.a to the 'linker settings' in 'build options' for Windows Compilation */
+#else
+#include <sys/socket.h> 											/* for socket(), connect(), send(), and recv() */
+#include <arpa/inet.h>  											/* for sockaddr_in and inet_addr() */
+#endif
+#include <stdlib.h>     											/* for atoi() and exit() */
+#include <string.h>     											/* for memset() */
+#include <unistd.h>     										    /* for close() */
+#include "Utils.h"
+#include "HandleTCPServer.h"
+
+/*
+ * This implementation is not a good example in terms of error handling or sequence control, this assumes everything is working okay
+ */
+
+void HandleTCPServer(int sock,char * servIP, unsigned short servPort,char * userdir,char * passdir) {
+
+    int dataSock = 0;
+    int first = 0;      //flag which is set upon encountering first successful credentials    
+    FILE *fpu = fopen(userdir,"r");  //file pointer to access the usernames.txt file
+    FILE *fpp = fopen(passdir,"r"); //file pointer to access the passwords.txt file
+    char temp[50],tempp[50];     //for storing data read from the two files.
+    char sucu[50],sucp[50];     // stores the first successful username and password
+    int countc=0,countin=0;    // no of correct and incorrect attempts
+    /* Receive Header (assuming single line header)*/
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+    if (returnCode(srvBuf) != 220) errorMessage("FTP Header Error!");
+/* send username */
+while(!feof(fpu))
+    {
+    strcpy(clntBuf,"USER ");                           //appending USER to username to send request.
+    fscanf(fpu,"%s",temp);
+    printf("for user %s\n",temp);
+    strcat(clntBuf,temp);
+    strcat(clntBuf,"\n");
+    strcpy(temp,clntBuf);
+    while(!feof(fpp))
+    {
+    strcpy(clntBuf,temp);
+    sendMessage(sock,clntBuf,strlen(clntBuf));       
+    /* response to USER command */
+   receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+    if (returnCode(srvBuf) != 331) 
+    {      //  errorMessage("Password Not Requested!");
+          sock = createAndConnectSocket(servIP, servPort);            // reconnect if connection is lost
+          receiveMessage(sock,srvBuf,sizeof(srvBuf));
+          if (returnCode(srvBuf) != 220) errorMessage("FTP Header Error!");
+          continue; 
+   }/* send password */
+    fscanf(fpp,"%s",tempp);
+    printf("trying %s\n",tempp);
+    strcpy(clntBuf,"PASS ");                                 //appending PASS to send password
+    strcat(clntBuf,tempp);
+    strcat(clntBuf,"\n");
+    sendMessage(sock,clntBuf,strlen(clntBuf));
+    /* receive password response */
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+    if (returnCode(srvBuf) != 230) 
+    {
+            //errorMessage("Password Failed!");              //if incorrect increase countin
+            countin++;
+            continue;
+    }
+    else
+    {
+            printf("%s%s",temp,clntBuf);
+            if(first==0)
+            {                               // set first flag and store the credentials in sucu and sucp
+            strcpy(sucu,temp);
+            strcpy(sucp,clntBuf);
+            first=1;
+            }
+            countc++;
+            strcpy(clntBuf,"QUIT\n");                    //disconnect and continue with other combination
+            sendMessage(sock,clntBuf,strlen(clntBuf));
+            /* QUIT Response */
+            receiveMessage(sock,srvBuf,sizeof(srvBuf));
+            printf("[%d] %s",returnCode(srvBuf),srvBuf);
+            break;
+    }
+    }
+    rewind(fpp);
+    }
+    printf("No of Correct attempts: %d\nNo of Incorrect attempts: %d\n",countc,countin);        //display no of correct and incorrect attempts
+    fclose(fpu);
+    fclose(fpp);
+    close(sock);
+    /*reconnect with successful credentials*/
+    sock = createAndConnectSocket(servIP , servPort);
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    if (returnCode(srvBuf) != 220) errorMessage("FTP Header Error!");
+    strcpy(clntBuf,sucu);
+    sendMessage(sock,clntBuf,strlen(clntBuf));
+    /* response to USER command */
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+    strcpy(clntBuf,sucp);
+    sendMessage(sock,clntBuf,strlen(clntBuf));
+    /* response to USER command */
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+    /* Enter passive mode so client established data stream connection */
+    strcpy(clntBuf,"PASV\n");
+    sendMessage(sock,clntBuf,strlen(clntBuf));
+
+    /* Server responds with Passive Details */
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+
+    if (returnCode(srvBuf) != 227) errorMessage("PASV Failed!");
+
+    processPASV(srvBuf, clntBuf, &port);
+    printf(" == PASV FTP Data Connection: Server [%s] Port [%d] ==\n", clntBuf, port);
+
+    /* create passive data stream */
+    dataSock = createAndConnectSocket(clntBuf, port);
+
+    /* send list command */
+    strcpy(clntBuf,"LIST\n");
+    sendMessage(sock,clntBuf,strlen(clntBuf));
+
+    /* receive response through command stream */
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+    if (returnCode(srvBuf) != 150) errorMessage("LIST Start Error!");
+
+    /* Receive Data */
+    msgSize = receiveData(dataSock, srvBuf, sizeof(srvBuf));
+    /* close datastream after usage */
+    close(dataSock);
+
+    /* Data stream details and content */
+    printf("Message Size:%d\n", msgSize);
+    printf("==============================================================================\n");
+    printf("%s",srvBuf);
+    printf("==============================================================================\n");
+
+    /* Command stream response */
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+    if (returnCode(srvBuf) != 226) errorMessage("LIST End Error!");
+
+    /* complete transaction */
+    strcpy(clntBuf,"QUIT\n");
+    sendMessage(sock,clntBuf,strlen(clntBuf));
+    /* QUIT Response */
+    receiveMessage(sock,srvBuf,sizeof(srvBuf));
+    printf("[%d] %s",returnCode(srvBuf),srvBuf);
+    if (returnCode(srvBuf) != 221) errorMessage("Quit Error!");
+}
+
